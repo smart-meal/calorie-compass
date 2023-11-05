@@ -29,7 +29,7 @@ def create_app(test_config=None):
         "host": "mongodb://127.0.0.1",
         "port": 27017,
         "username": "root",
-        "password": "password" # TODO move these into environment variable
+        "password": "password"  # TODO move these into environment variable
     }
     db = MongoEngine()
     db.init_app(app)
