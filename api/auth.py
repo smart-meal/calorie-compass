@@ -1,3 +1,5 @@
+from typing import Callable
+
 from flask import (
     Blueprint, request, session, jsonify
 )
@@ -6,6 +8,19 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.user.model import User
 from api.user.service import get_user_by_username
+
+
+def require_session(func: Callable):
+    def wrapper(*args, **kwargs):
+        if 'user_id' in session:
+            # Session data is valid, continue with the request
+            return func(*args, **kwargs)
+        else:
+            # Session data is not valid, redirect to a login page or perform another action
+            return jsonify({"error": "Unauthorized"}), 401
+
+    return wrapper
+
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -80,3 +95,10 @@ def login():
         "error": error
     }
     return jsonify(result), 400
+
+
+@bp.route("/logout", methods=("POST",))
+@require_session
+def logout():
+    session.clear()
+    return jsonify({"message": "Successfully logged out"})
