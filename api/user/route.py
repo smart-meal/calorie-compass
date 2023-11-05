@@ -1,44 +1,18 @@
-from typing import Callable
-
 from flask import (
     Blueprint, request, session, jsonify
 )
-from marshmallow import Schema, fields, ValidationError
+from marshmallow import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.user.model import User
+from api.user.schema import RegisterSchema, LoginSchema
 from api.user.service import get_user_by_username
+from api.util.auth import require_session
+
+user_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-def require_session(func: Callable):
-    def wrapper(*args, **kwargs):
-        if 'user_id' in session:
-            # Session data is valid, continue with the request
-            return func(*args, **kwargs)
-        else:
-            # Session data is not valid, redirect to a login page or perform another action
-            return jsonify({"error": "Unauthorized"}), 401
-
-    return wrapper
-
-
-bp = Blueprint('auth', __name__, url_prefix='/auth')
-
-
-class LoginSchema(Schema):
-    username = fields.Str(required=True)
-    password = fields.Str(required=True)
-
-
-class RegisterSchema(Schema):
-    username = fields.Str(required=True)
-    password = fields.Str(required=True)
-    repeat_password = fields.Str(required=True)
-    # TODO add a validator method to check if password and repeat password are the same
-    # TODO add a validator for minimum requirements of password(length, symbols, letters, numbers)
-
-
-@bp.route('/register', methods=('POST',))
+@user_blueprint.route('/register', methods=('POST',))
 def register():
     register_schema = RegisterSchema()
     try:
@@ -68,7 +42,7 @@ def register():
     return jsonify(result), 400
 
 
-@bp.route('/login', methods=('POST',))
+@user_blueprint.route('/login', methods=('POST',))
 def login():
     register_schema = LoginSchema()
     try:
@@ -97,7 +71,7 @@ def login():
     return jsonify(result), 400
 
 
-@bp.route("/logout", methods=("POST",))
+@user_blueprint.route("/logout", methods=("POST",))
 @require_session
 def logout():
     session.clear()

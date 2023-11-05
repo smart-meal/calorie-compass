@@ -33,7 +33,7 @@ def create_app(test_config=None):
     }
     db = MongoEngine()
     db.init_app(app)
-    from . import auth
-    app.register_blueprint(auth.bp)
+    from api import user
+    app.register_blueprint(user.user_blueprint)
 
     return app
