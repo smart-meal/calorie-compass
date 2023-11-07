@@ -1,6 +1,4 @@
-from flask import Flask, request, render_template
 import openai
-import os
 
 
 def chatgpt_api(messages):

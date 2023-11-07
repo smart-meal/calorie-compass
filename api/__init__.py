@@ -2,6 +2,9 @@ import os
 
 from flask import Flask
 from flask_mongoengine import MongoEngine
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def create_app(test_config=None):
@@ -24,12 +27,13 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+    print(os.getenv("MONGO_HOST"))
     app.config['MONGODB_SETTINGS'] = {
         "db": "calorie_compass",
-        "host": "mongodb://127.0.0.1",
+        "host": os.getenv("MONGO_HOST"),
         "port": 27017,
-        "username": "root",
-        "password": "password"  # TODO move these into environment variable
+        "username": os.getenv("MONGO_USERNAME"),
+        "password": os.getenv("MONGO_PASSWORD") 
     }
     db = MongoEngine()
     db.init_app(app)
