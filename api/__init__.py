@@ -33,7 +33,7 @@ def create_app(test_config=None):
         "host": os.getenv("MONGO_HOST"),
         "port": 27017,
         "username": os.getenv("MONGO_USERNAME"),
-        "password": os.getenv("MONGO_PASSWORD")  # TODO move these into environment variable
+        "password": os.getenv("MONGO_PASSWORD") 
     }
     db = MongoEngine()
     db.init_app(app)
