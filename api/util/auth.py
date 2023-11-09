@@ -13,4 +13,3 @@ def require_session(func: Callable):
             return jsonify({"error": "Unauthorized"}), 401
 
     return wrapper
-
