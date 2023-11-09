@@ -17,11 +17,11 @@ def register():
     register_schema = RegisterSchema()
     try:
         request_json = request.get_json()
-        register_schema.load(request_json)
+        validated_data = register_schema.load(request_json)
     except ValidationError as err:
         return err.messages, 422
-    username = request_json['username']
-    password = request_json['password']
+    username = validated_data['username']
+    password = validated_data['password']
     error = None
 
     if not username:
@@ -44,10 +44,10 @@ def register():
 
 @user_blueprint.route('/login', methods=('POST',))
 def login():
-    register_schema = LoginSchema()
+    login_schema = LoginSchema()
     try:
         request_json = request.get_json()
-        register_schema.load(request_json)
+        login_schema.load(request_json)
     except ValidationError as err:
         return err.messages, 422
     username = request_json['username']
