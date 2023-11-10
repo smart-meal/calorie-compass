@@ -8,6 +8,8 @@ To setup on a local environment:
   `pip install -r requirements.txt` (make sure you enable virtual environment if any)
 - Run the app:
     `python main.py` or `export FLASK_APP=api` then `flask run`
+  
+- Make sure there is a valid .env file in the repository. Look at the .env_example to see what is needed.
 
 ### Local Environment
 
