@@ -24,10 +24,6 @@ def register():
     password = validated_data['password']
     error = None
 
-    if not username:
-        error = 'Username is required.'
-    elif not password:
-        error = 'Password is required.'
     user = get_user_by_username(username)
     if user is not None:
         error = f"User {username} is already registered."
