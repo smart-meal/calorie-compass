@@ -37,7 +37,8 @@ def register():
     if error is None:
         user = User(username=username, password_hash=generate_password_hash(password))
         user.save()
-        return jsonify(user)
+        result = user.to_dict()
+        return jsonify(result)
 
     result = {
         "error": error
@@ -71,7 +72,8 @@ def login():
         session['user_id'] = str(user['id'])
         logger.info("'%s' successfully logged in", get_user_id_from_session())
 
-        return jsonify(user)
+        result = user.to_dict()
+        return jsonify(result)
     session.clear()
     result = {
         "error": error
