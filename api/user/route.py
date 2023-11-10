@@ -23,7 +23,7 @@ def register():
         return err.messages, 422
     username = validated_data['username']
     password = validated_data['password']
-    logger.info("Registering %s", username)
+    logger.info("Registering '%s'", username)
 
     error = None
 

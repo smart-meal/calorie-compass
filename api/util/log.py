@@ -66,7 +66,7 @@ def get_logger(log_config: LoggingSetup) -> logging.Logger:
     file_handler.setLevel(log_config.file_level)
 
     new_logger.addHandler(file_handler)
-    new_logger.debug("Logger %s has been created", new_logger.name)
+    new_logger.debug("Logger '%s' has been created", new_logger.name)
     return new_logger
 
 
