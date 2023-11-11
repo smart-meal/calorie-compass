@@ -1,3 +1,5 @@
+import os
+
 from flask import (
     Blueprint, request, session, jsonify
 )
@@ -35,7 +37,12 @@ def register():
     if user is not None:
         error = f"User {username} is already registered."
     if error is None:
-        user = User(username=username, password_hash=generate_password_hash(password))
+        salt = os.urandom(16).hex()
+        password_salt_combined = password + salt
+        user = User(
+            username=username,
+            password_hash=generate_password_hash(password_salt_combined),
+            salt=salt)
         user.save()
         return jsonify(user)
 
@@ -61,10 +68,12 @@ def login():
     if user is None:
         logger.info("Incorrect username '%s'", username)
         error = 'Incorrect username.'
-    elif not check_password_hash(user.password_hash, password):
-        logger.info("Incorrect password for '%s'", username)
-
-        error = 'Incorrect password.'
+    else:
+        salt = user.salt
+        password_salt_combined = password + salt
+        if not check_password_hash(user.password_hash, password_salt_combined):
+            logger.info("Incorrect password for '%s'", username)
+            error = 'Incorrect password.'
 
     if error is None:
         session.clear()
