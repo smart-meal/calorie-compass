@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.user.model import User
 from api.user.schema import RegisterSchema, LoginSchema
-from api.user.service import get_user_by_username
+from api.user.service import get_user_by_username, get_user_by_id
 from api.util.auth import require_session
 
 user_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
@@ -84,3 +84,29 @@ def login():
 def logout():
     session.clear()
     return jsonify({"message": "Successfully logged out"})
+
+@user_blueprint.route("/delete", methods=("POST",))
+@require_session
+def delete_account():
+    error = None
+    if 'user_id' not in session:
+        error = "Not logged in"
+        return jsonify({"error": error}), 400
+
+    user_id = session['user_id']
+    user = get_user_by_id(user_id)
+
+    if not user:
+        error = "User id:{} not found".format(user_id)
+        return jsonify({"error": error}), 400
+    
+    user.delete()
+    if error is None:
+        session.pop('user_id', None)
+        return jsonify({"message": "Successfully deleted"})
+
+    result = {
+        "error": error
+    }
+    return jsonify(result), 400
+    

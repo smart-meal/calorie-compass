@@ -1,9 +1,11 @@
 from typing import Callable
 
 from flask import session, jsonify
+from functools import wraps
 
 
 def require_session(func: Callable):
+    @wraps(func) # avoid "View function mapping is overwriting an existing endpoint function"
     def wrapper(*args, **kwargs):
         if 'user_id' in session:
             # Session data is valid, continue with the request
