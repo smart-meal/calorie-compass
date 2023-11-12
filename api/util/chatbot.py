@@ -50,4 +50,7 @@ class Chat:
             )
         return resp_message
     
+    def get_messages(self):
+        return self.messages
+    
     
