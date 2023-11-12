@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional
-
 import openai
+from api.util.log import logger
 
 
 class Chat:
@@ -31,24 +31,34 @@ class Chat:
             resp = response.choices[0].message
             resp_message = resp.content
             resp_role = resp.role
-            self.messages.append(
-                {"role": resp_role, "content": resp_message}
-            )
+            
         except openai.error.OpenAIError as e:
             if isinstance(e, openai.error.AuthenticationError):
-                print(f"OpenAI API request was not authorized: {e}")
+                logger.error("OpenAI API request was not authorized: %s",e)
             elif isinstance(e, openai.error.PermissionError):
-                print(f"OpenAI API request was not permitted: {e}")
+                logger.errort(f"OpenAI API request was not permitted: %s",e)
             elif isinstance(e, openai.error.RateLimitError):
-                print(f"OpenAI API request exceeded rate limit: {e}")
+                logger.error(f"OpenAI API request exceeded rate limit: %s",e)
+                error_resp_message = "You have sent too many requests or your message is too long."
+            elif isinstance(e, openai.error.InvalidRequestError):
+                logger.error(f"OpenAI API request is invalid: %s",e)
+                error_resp_message = "The request is invalid please try again with a different request"
             else:
-                print(f"OpenAI API error: {e}")
-            resp_role = "assistant"
-            resp_message = None
-            self.messages.append(
+                logger.error(f"OpenAI API error: %s",e)
+                error_resp_message = "There was an error, please try again"
+            
+            # No need to append to the conversation history if there's any error, the user will just get 
+            # the message and can send the request again based on the error.
+            
+            return error_resp_message
+        
+        # Appending user message after except block because if the error is due to the user query we dont 
+        # want that in the conversation history as it can cause some problems for the subsequent messages.
+        self.messages.append(
                 {"role": resp_role, "content": resp_message}
             )
         return resp_message
+
 
     def get_messages(self):
         return self.messages
