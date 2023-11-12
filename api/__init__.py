@@ -26,6 +26,8 @@ def create_app():
     db = MongoEngine()
     db.init_app(app)
     from api import user  # pylint: disable=import-outside-toplevel
+    from api import chat  # pylint: disable=import-outside-toplevel
     app.register_blueprint(user.user_blueprint)
+    app.register_blueprint(chat.chat_blueprint)
 
     return app
