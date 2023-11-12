@@ -14,7 +14,8 @@ class RegisterSchema(Schema):
     repeat_password = fields.Str(required=True)
 
     @validates_schema
-    def validate_numbers(self, data, **kwargs):
+    def validate_numbers(self, data, **kwargs):  # pylint: disable=unused-argument
+
         if data["password"] != data["repeat_password"]:
             raise ValidationError("Password do not match")
 

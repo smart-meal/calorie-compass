@@ -11,5 +11,5 @@ class User(me.Document):
         result.pop("_id", None)
         result.pop("password_hash", None)
         result.pop("salt", None)
-        result["id"] = str(self.id)
+        result["id"] = str(self.id)  # pylint: disable=no-member
         return result

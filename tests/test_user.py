@@ -1,35 +1,5 @@
 import json
 
-import mongomock
-import pytest
-from flask import Flask
-from mongoengine import connect
-
-
-@pytest.fixture
-def app():
-    app = Flask(__name__)
-    app.config['SECRET_KEY'] = "secret"
-    app.config['TESTING'] = True
-    app.config['WTF_CSRF_ENABLED'] = False  # Disable CSRF for testing
-    app.config['SECRET_KEY'] = "something unique"
-
-    # Use mongomock for testing
-    app.config['MONGODB_SETTINGS'] = {
-        'db': 'test_db',
-        'host': 'mongodb://localhost',
-    }
-    connect('test_db', host='mongodb://localhost', mongo_client_class=mongomock.MongoClient)
-    from api import user
-    app.register_blueprint(user.user_blueprint)
-
-    return app
-
-
-@pytest.fixture
-def client(app):
-    return app.test_client()
-
 
 def register_user(client, username, password):
     data = {
