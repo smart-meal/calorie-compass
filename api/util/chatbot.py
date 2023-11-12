@@ -49,8 +49,6 @@ class Chat:
                 {"role": resp_role, "content": resp_message}
             )
         return resp_message
-    
+
     def get_messages(self):
         return self.messages
-    
-    

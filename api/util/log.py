@@ -9,11 +9,8 @@ from api.config import CONSOLE_LOG_FORMAT, LOG_FORMAT, BASE_DIRECTORY
 
 
 @dataclass
-class LoggingSetup:
-    name: str
-    console_level: int = logging.ERROR
+class LoggingFileSetup:
     file_level: int = logging.INFO
-    console_format: str = CONSOLE_LOG_FORMAT
     file_format: str = LOG_FORMAT
     file_name: Optional[str] = None
     max_file_size_in_bytes: int = 1024 * 1024
@@ -21,8 +18,16 @@ class LoggingSetup:
     log_directory: Path = BASE_DIRECTORY.joinpath("logs").absolute()
     os.makedirs(log_directory, exist_ok=True)
 
+
+@dataclass
+class LoggingSetup:
+    name: str
+    console_level: int = logging.ERROR
+    console_format: str = CONSOLE_LOG_FORMAT
+    file_setup: LoggingFileSetup = LoggingFileSetup()
+
     def get_effective_log_level(self):
-        return min(self.console_level, self.file_level)
+        return min(self.console_level, self.file_setup.file_level)
 
 
 def get_logger(log_config: LoggingSetup) -> logging.Logger:
@@ -49,21 +54,21 @@ def get_logger(log_config: LoggingSetup) -> logging.Logger:
     stream_handler.setLevel(log_config.console_level)
 
     new_logger.addHandler(stream_handler)
-    if log_config.file_name is None:
-        log_config.file_name = log_config.name.lower() + ".log"
+    if log_config.file_setup.file_name is None:
+        log_config.file_setup.file_name = log_config.name.lower() + ".log"
         logging.warning(
-            "No file specified, defaulting to '%s'", log_config.file_name
+            "No file specified, defaulting to '%s'", log_config.file_setup.file_name
         )
 
-    file_name = log_config.log_directory.joinpath(log_config.file_name)
-    file_formatter = logging.Formatter(log_config.file_format)
+    file_name = log_config.file_setup.log_directory.joinpath(log_config.file_setup.file_name)
+    file_formatter = logging.Formatter(log_config.file_setup.file_format)
 
     file_handler = logging.handlers.RotatingFileHandler(
-        file_name, maxBytes=log_config.max_file_size_in_bytes,
-        backupCount=log_config.file_backup_count
+        file_name, maxBytes=log_config.file_setup.max_file_size_in_bytes,
+        backupCount=log_config.file_setup.file_backup_count
     )
     file_handler.setFormatter(file_formatter)
-    file_handler.setLevel(log_config.file_level)
+    file_handler.setLevel(log_config.file_setup.file_level)
 
     new_logger.addHandler(file_handler)
     new_logger.debug("Logger '%s' has been created", new_logger.name)

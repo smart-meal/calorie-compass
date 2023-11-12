@@ -9,6 +9,7 @@ def get_user_by_username(username: str) -> Optional[User]:
     Return the user model by its username
     If no user found, return None
     """
+    # pylint: disable=no-member
     users_result = User.objects(username=username)
     count = users_result.count()
     if count > 1:
