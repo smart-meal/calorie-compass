@@ -5,6 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 file_name = os.getenv("ENV_FILE_PATH", "./.env")
+print(f"Loading env file: {file_name}")
 load_dotenv(file_name)
 
 MONGO_DB_NAME = "calorie_compass"
