@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from flask import Flask
 from flask_mongoengine import MongoEngine
 
@@ -10,6 +12,9 @@ def create_app():
     app.config.from_mapping(
         SECRET_KEY=config.SECRET_KEY,
     )
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['SESSION_COOKIE_HTTPONLY'] = False
 
     app.config['MONGODB_SETTINGS'] = {
         "db": config.MONGO_DB_NAME,
