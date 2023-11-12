@@ -21,6 +21,7 @@ jobs:
           pip install -r requirements-test.txt
       - name: Analysing the code with pylint
         run: |
+          export ENV_FILE_PATH="./test_env"
           pylint --rcfile .pylintrc $(git ls-files '*.py')
       - name: Run tests
         run: |
