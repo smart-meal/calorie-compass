@@ -31,34 +31,45 @@ class Chat:
             resp = response.choices[0].message
             resp_message = resp.content
             resp_role = resp.role
-            
+            self.messages.append(
+                {"role": resp_role, "content": resp_message}
+            )
+            return resp_message
+        
         except openai.error.OpenAIError as e:
+            # First remvoing the user message as it could be one of the reasons the error was caused.
+            #  So it is safe to remove that from conversation history.
+            self.messages.pop()
+            error_resp_message = "There was an error, please try again"
             if isinstance(e, openai.error.AuthenticationError):
                 logger.error("OpenAI API request was not authorized: %s",e)
+
             elif isinstance(e, openai.error.PermissionError):
-                logger.errort(f"OpenAI API request was not permitted: %s",e)
+                logger.errort("OpenAI API request was not permitted: %s",e)
+
             elif isinstance(e, openai.error.RateLimitError):
-                logger.error(f"OpenAI API request exceeded rate limit: %s",e)
+                logger.error("OpenAI API request exceeded rate limit: %s",e)
                 error_resp_message = "You have sent too many requests or your message is too long."
+
             elif isinstance(e, openai.error.InvalidRequestError):
-                logger.error(f"OpenAI API request is invalid: %s",e)
+                logger.error("OpenAI API request is invalid: %s",e)
                 error_resp_message = "The request is invalid please try again with a different request"
+
+            elif isinstance(e, openai.error.Timeout):
+                logger.error("OpenAI API request Timed out: %s",e)
+                error_resp_message = "Your request timed out, please check your connection or try again after some time"
+
+            elif isinstance(e, openai.error.ServiceUnavailableError):
+                logger.error("OpenAI API request service is unavailable: %s",e)
+                error_resp_message = "The service is currently unavailable please try again after some time."
             else:
-                logger.error(f"OpenAI API error: %s",e)
-                error_resp_message = "There was an error, please try again"
+                logger.error("OpenAI API error: %s",e)
             
             # No need to append to the conversation history if there's any error, the user will just get 
-            # the message and can send the request again based on the error.
+            # the error message and can send the request again based on the error.
             
             return error_resp_message
         
-        # Appending user message after except block because if the error is due to the user query we dont 
-        # want that in the conversation history as it can cause some problems for the subsequent messages.
-        self.messages.append(
-                {"role": resp_role, "content": resp_message}
-            )
-        return resp_message
-
 
     def get_messages(self):
         return self.messages
