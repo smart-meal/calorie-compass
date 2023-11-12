@@ -2,6 +2,9 @@ name: Lint and Test
 
 on: [ pull_request ]
 
+env:
+  ENV_FILE_PATH: ./test_env
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,5 +27,4 @@ jobs:
           pylint --rcfile .pylintrc $(git ls-files '*.py')
       - name: Run tests
         run: |
-          export ENV_FILE_PATH="./test_env"
           pytest
