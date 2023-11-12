@@ -23,7 +23,5 @@ class Message(me.Document):
     def to_dict(self):
         result = self.to_mongo().to_dict()
         result.pop("_id", None)
-        result.pop("password_hash", None)
-        result.pop("salt", None)
         result["id"] = str(self.id)  # pylint: disable=no-member
         return result
