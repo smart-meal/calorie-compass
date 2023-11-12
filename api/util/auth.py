@@ -3,6 +3,12 @@ from typing import Callable
 from flask import session, jsonify
 
 
+def get_user_id_from_session():
+    if 'user_id' in session:
+        return session['user_id']
+    raise RuntimeError("No session")
+
+
 def require_session(func: Callable):
     def wrapper(*args, **kwargs):
         if 'user_id' in session:
@@ -13,4 +19,3 @@ def require_session(func: Callable):
             return jsonify({"error": "Unauthorized"}), 401
 
     return wrapper
-

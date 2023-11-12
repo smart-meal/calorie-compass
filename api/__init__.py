@@ -1,39 +1,22 @@
-import os
-
 from flask import Flask
 from flask_mongoengine import MongoEngine
-from dotenv import load_dotenv
 
-load_dotenv()
+from api import config
 
 
-def create_app(test_config=None):
+def create_app():
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__)
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY=config.SECRET_KEY,
     )
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
-
-    # ensure the instance folder exists
-    print(app.instance_path)
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
-    print(os.getenv("MONGO_HOST"))
     app.config['MONGODB_SETTINGS'] = {
-        "db": "calorie_compass",
-        "host": os.getenv("MONGO_HOST"),
-        "port": 27017,
-        "username": os.getenv("MONGO_USERNAME"),
-        "password": os.getenv("MONGO_PASSWORD") 
+        "db": config.MONGO_DB_NAME,
+        "host": config.MONGO_HOST,
+        "port": config.MONGO_PORT,
+        "username": config.MONGO_USERNAME,
+        "password": config.MONGO_PASSWORD,
     }
     db = MongoEngine()
     db.init_app(app)
