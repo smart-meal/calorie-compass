@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from marshmallow import ValidationError
 
 from api.chat.schema import NewMessageSchema
+from api.chat.service import send_message
 from api.util.auth import require_session
 
 chat_blueprint = Blueprint('chat', __name__, url_prefix='/chat')
@@ -17,3 +18,5 @@ def get_messages():
     except ValidationError as err:
         return err.messages, 422
     message = validated_data['message']
+
+    return send_message(message)
