@@ -97,10 +97,11 @@ def logout():
 @require_session
 def delete_account():
     error = None
-    user = get_user_by_id(get_user_id_from_session())
+    user_id = get_user_id_from_session()
+    user = get_user_by_id(user_id)
 
     if not user:
-        error = "User id:{} not found".format(user_id)
+        error = f"UserId {user_id} not found."
         return jsonify({"error": error}), 400
     
     user.delete()

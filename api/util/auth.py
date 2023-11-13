@@ -2,7 +2,6 @@ from functools import wraps
 from typing import Callable
 
 from flask import session, jsonify
-from functools import wraps
 
 
 def get_user_id_from_session():

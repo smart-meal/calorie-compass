@@ -33,3 +33,4 @@ def get_user_by_id(uid: str) -> Optional[User]:
     if count == 0:
         return None
     return users_result.get()
+    
