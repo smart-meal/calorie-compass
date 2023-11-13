@@ -1,5 +1,7 @@
-from marshmallow import Schema, fields, validates_schema, ValidationError
 import re
+
+from marshmallow import Schema, fields, validates_schema, ValidationError
+
 
 class LoginSchema(Schema):
     username = fields.Str(required=True)
@@ -10,12 +12,13 @@ class RegisterSchema(Schema):
     username = fields.Str(required=True)
     password = fields.Str(required=True)
     repeat_password = fields.Str(required=True)
-    
+
     @validates_schema
-    def validate_numbers(self, data, **kwargs):
+    def validate_numbers(self, data, **kwargs):  # pylint: disable=unused-argument
+
         if data["password"] != data["repeat_password"]:
             raise ValidationError("Password do not match")
-        
+
         if len(data["password"]) < 8:
             raise ValidationError("Password must be at least 8 characters long")
 
@@ -30,17 +33,17 @@ class RegisterSchema(Schema):
 
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", data["password"]):
             raise ValidationError("Password must contain at least one special character")
-        
+
 class UpdatePasswordSchema(Schema):
     old_password = fields.Str(required=True)
     new_password = fields.Str(required=True)
     repeat_password = fields.Str(required=True)
-    
+
     @validates_schema
-    def validate_numbers(self, data, **kwargs):
+    def validate_numbers(self, data, **kwargs):  # pylint: disable=unused-argument
         if data["new_password"] != data["repeat_password"]:
             raise ValidationError("Password do not match")
-        
+
         if len(data["new_password"]) < 8:
             raise ValidationError("Password must be at least 8 characters long")
 

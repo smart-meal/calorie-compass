@@ -1,15 +1,40 @@
+from typing import List, Dict, Optional
+
 import openai
 
 
-def chatgpt_api(messages):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        max_tokens=100
-    )
+class Chat:
+    def __init__(
+            self,
+            api_key: str,
+            max_tokens: int = 100,
+            previous_messages: Optional[List[Dict]] = None,
+            model: str = "gpt-3.5-turbo",
+    ):
+        if previous_messages is None:
+            previous_messages = []
+        self.messages = previous_messages
+        self.max_tokens = max_tokens
+        self.api_key = api_key
+        self.model = model
 
-    model_reply = response['choices'][0]['message']['content']
-    return model_reply
+    def send_message(self, message: str, role: str = "user") -> str:
+        new_message = {"role": role, "content": message}
+        self.messages.append(new_message)
+        response = openai.ChatCompletion.create(
+            api_key=self.api_key,
+            model=self.model,
+            messages=self.messages,
+            max_tokens=self.max_tokens,
+        )
 
-def set_api_key(api_key):
-    openai.api_key = api_key
+        resp = response.choices[0].message
+        resp_message = resp.content
+        resp_role = resp.role
+        self.messages.append(
+            {"role": resp_role, "content": resp_message}
+        )
+        return resp_message
+
+    def get_messages(self):
+        return self.messages
