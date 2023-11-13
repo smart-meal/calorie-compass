@@ -47,6 +47,7 @@ class Chat:
                 resp_message = resp['content']
                 resp_role = resp['role']
                 self.messages.append({"role": resp_role, "content": resp_message})
+                return resp_message
             else:
                 if 'error' in response:
                     error_message = response['error']['message']
