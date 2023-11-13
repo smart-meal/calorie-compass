@@ -24,7 +24,9 @@ class LoggingSetup:
     name: str
     console_level: int = logging.ERROR
     console_format: str = CONSOLE_LOG_FORMAT
-    file_setup: LoggingFileSetup = field(default_factory=lambda: LoggingFileSetup())
+    file_setup: LoggingFileSetup = field(
+        default_factory=lambda: LoggingFileSetup()  # pylint: disable=unnecessary-lambda
+    )
 
     def get_effective_log_level(self):
         return min(self.console_level, self.file_setup.file_level)
