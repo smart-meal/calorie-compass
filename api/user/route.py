@@ -96,7 +96,6 @@ def logout():
 @user_blueprint.route("/delete", methods=("POST",))
 @require_session
 def delete_account():
-    error = None
     user_id = get_user_id_from_session()
     user = get_user_by_id(user_id)
 
@@ -105,12 +104,7 @@ def delete_account():
         return jsonify({"error": error}), 400
 
     user.delete()
-    if error is None:
-        session.pop('user_id', None)
-        return jsonify({"message": "Successfully deleted"})
 
-    result = {
-        "error": error
-    }
-    return jsonify(result), 400
+    session.clear()
+    return jsonify({"message": "Successfully deleted"})
     

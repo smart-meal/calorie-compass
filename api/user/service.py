@@ -24,9 +24,8 @@ def get_user_by_id(uid: str) -> Optional[User]:
     Return the user model by its id
     If no user found, return None
     """
-    # https://stackoverflow.com/questions/9988352/how-to-search-document-by-oid-in-mongoengine
     # pylint: disable=no-member
-    users_result = User.objects(pk=uid)
+    users_result = User.objects(id=uid)
     count = users_result.count()
     if count > 1:
         logger.error("%s users matched by user id '%s'", count, uid)
