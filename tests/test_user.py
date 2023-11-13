@@ -19,6 +19,14 @@ def login_user(client, username, password):
     response = client.post('/auth/login', data=json.dumps(data), content_type='application/json')
     return response
 
+def update_password(client, old_password, new_password, repeat_password):
+    data = {
+        "old_password": old_password,
+        "new_password": new_password,
+        "repeat_password": repeat_password
+    }
+    response = client.post('/auth/update_password', data=json.dumps(data), content_type='application/json')
+    return response
 
 def test_register_user(client):
     username = "testuser"
@@ -110,3 +118,31 @@ def test_delete(client):
 
     login_response = login_user(client, username, password)
     assert login_response.status_code == 400
+
+def test_update_password(client):
+    username = "testuser"
+    password = "OldPassword123!"
+    register_user(client, username, password)
+    login_response = login_user(client, username, password)
+    assert login_response.status_code == 200
+
+    new_password = "Password123!"
+    update_response = update_password(client, password, new_password, new_password)
+    assert update_response.status_code == 200
+
+    client.post('/auth/logout')
+    login_response = login_user(client, username, password)
+    assert login_response.status_code == 400
+    login_response = login_user(client, username, new_password)
+    assert login_response.status_code == 200
+
+def test_update_mismatch_password(client):
+    username = "testuser"
+    password = "Password123!"
+    register_user(client, username, password)
+    login_response = login_user(client, username, password)
+    assert login_response.status_code == 200
+
+    new_password = "NewPassword123!"
+    update_response = update_password(client, password, new_password, "mismatch_password")
+    assert update_response.status_code == 422

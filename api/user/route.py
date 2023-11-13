@@ -139,4 +139,4 @@ def update_password():
     user.save()
     session.clear()
     session['user_id'] = str(user['id'])
-    return jsonify(user)
+    return jsonify(user.to_dict())
