@@ -6,14 +6,18 @@ import mongoengine as me
 
 class MessageType(Enum):
     USER = 'user'
-    ASSISTANT = 'ASSISTANT'
-    SYSTEM = 'SYSTEM'
+    ASSISTANT = 'assistant'
+    SYSTEM = 'system'
+
+    @classmethod
+    def get_all_types(cls):
+        return [e.value for e in cls]
 
 
 class Message(me.Document):
     text = me.StringField(required=True)
     type = me.EnumField(required=True, enum=MessageType)
-    date = me.DateTimeField(required=True)
+    date = me.DateTimeField(required=True, default=datetime.datetime.utcnow)
     user_id = me.ReferenceField(required=True, document_type="User", dbref=False)
 
     def __init__(self, *args, **values):
