@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
 
 from api.chat.schema import MessageFilterSchema, NewMessageSchema
-from api.chat.service import get_messages, send_message
+from api.chat.service import get_messages, send_message, clean_user_chat_history
 from api.util.auth import require_session
 
 chat_blueprint = Blueprint('chat', __name__, url_prefix='/chat')
@@ -33,4 +33,11 @@ def send_new_message():
         return err.messages, 422
     message = validated_data['message']
     response = send_message(message)
-    return jsonify(response)
+    return jsonify(response.to_dict())
+
+
+@chat_blueprint.route('/clean', methods=('DELETE',))
+@require_session
+def clean_chat_history():
+    clean_user_chat_history()
+    return jsonify({"message": "Chat history successfully cleaned"})

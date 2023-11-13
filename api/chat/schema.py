@@ -13,7 +13,7 @@ class MessageFilterSchema(Schema):
     types = fields.List(
         fields.Enum(enum=MessageType, required=True),
         required=False,
-        missing=MessageType.get_all_types,
+        missing=MessageType.get_regular_message_types,
     )
     newest_first = fields.Boolean(required=False, default=True, missing=True)
 

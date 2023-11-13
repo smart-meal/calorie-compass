@@ -39,7 +39,7 @@ def get_previous_conversation_context(user_id):
     }
     system_messages = get_messages(system_filter)
     logger.info(
-        "Found %s previous and %s system messages for %s",
+        "Found '%s' previous and '%s' system messages for '%s'",
         len(previous_messages),
         len(system_messages),
         user_id
@@ -65,3 +65,10 @@ def get_messages(message_filter: Dict):
         .order_by(ascending + "date") \
         .skip(skip) \
         .limit(per_page)
+
+
+def clean_user_chat_history():
+    user_id = get_user_id_from_session()
+    # pylint: disable=no-member
+    result = Message.objects(user_id=user_id).delete()
+    logger.info("Deleted '%s' messages for '%s'", result, user_id)

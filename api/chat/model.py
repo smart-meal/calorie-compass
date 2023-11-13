@@ -13,6 +13,10 @@ class MessageType(Enum):
     def get_all_types(cls):
         return [e.value for e in cls]
 
+    @classmethod
+    def get_regular_message_types(cls):
+        return [MessageType.USER, MessageType.ASSISTANT]
+
 
 class Message(me.Document):
     text = me.StringField(required=True)
