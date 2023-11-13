@@ -93,3 +93,20 @@ def test_logout(client):
 
     with client.session_transaction() as sess:
         assert 'user_id' not in sess
+
+def test_delete(client):
+    username = "testuser"
+    password = "Password123!"
+    register_user(client, username, password)
+    login_response = login_user(client, username, password)
+    assert login_response.status_code == 200
+
+    response = client.post('/auth/delete')
+    assert response.status_code == 200
+    assert 'Successfully deleted' in response.data.decode()
+
+    with client.session_transaction() as sess:
+        assert 'user_id' not in sess
+
+    login_response = login_user(client, username, password)
+    assert login_response.status_code == 400

@@ -103,7 +103,7 @@ def delete_account():
     if not user:
         error = f"UserId {user_id} not found."
         return jsonify({"error": error}), 400
-    
+
     user.delete()
     if error is None:
         session.pop('user_id', None)

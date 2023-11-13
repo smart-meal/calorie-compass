@@ -25,12 +25,12 @@ def get_user_by_id(uid: str) -> Optional[User]:
     If no user found, return None
     """
     # https://stackoverflow.com/questions/9988352/how-to-search-document-by-oid-in-mongoengine
+    # pylint: disable=no-member
     users_result = User.objects(pk=uid)
     count = users_result.count()
     if count > 1:
-        # TODO log the number of results
+        logger.error("%s users matched by user id '%s'", count, uid)
         raise RuntimeError("Something went wrong")
     if count == 0:
         return None
     return users_result.get()
-    
