@@ -27,9 +27,9 @@ class UserSchema(Schema):
             raise ValidationError("Height can not be less than zero.")
         if data["weight"]<0:
             raise ValidationError("Weight can not be less than zero.")
-        if data["goal"].upper() == "MAINTAIN THE WEIGHT" or data["goal"].upper() == "LOSE WEIGHT" or data["goal"].upper() == "GAIN WEIGHT":
+        if data["goal"].upper() != "MAINTAIN THE WEIGHT" and data["goal"].upper() != "LOSE WEIGHT" and data["goal"].upper() != "GAIN WEIGHT":
             raise ValidationError("Invalid option choosen.")
-        if data["lifestyle"].upper() == "LAZY" or data["lifestyle"].upper() == "SEDENTARY" or data["lifestyle"].upper() == "ACTIVE" or data["lifestyle"] == "MODERATE":
+        if data["lifestyle"].upper() != "LAZY" and data["lifestyle"].upper() != "SEDENTARY" and data["lifestyle"].upper() != "ACTIVE" and data["lifestyle"] != "MODERATE":
             raise ValidationError("Invalid option choosen.")
           
 
