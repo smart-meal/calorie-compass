@@ -2,10 +2,11 @@
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
+pool: 'cc'
+
 trigger:
 - main
 
-pool: cc
 resources:
 - repo: self
 
