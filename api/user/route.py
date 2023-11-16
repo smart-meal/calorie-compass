@@ -6,9 +6,9 @@ from flask import (
 from marshmallow import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from api.user.model import User
-from api.user.schema import RegisterSchema, LoginSchema
-from api.user.service import get_user_by_username, get_user_by_id
+from api.user.model import User, UserProfile
+from api.user.schema import RegisterSchema, LoginSchema, UserSchema
+from api.user.service import get_user_by_username, get_user_by_id, calculate_bmi
 from api.util.auth import require_session, get_user_id_from_session
 from api.util.log import logger
 
@@ -85,6 +85,55 @@ def login():
     }
     return jsonify(result), 400
 
+@user_blueprint.route('/profile', methods=('POST',))
+@require_session
+def create_profile():
+    user_id = session.get('user_id')
+    logger.info("User ID from session: %s", user_id)
+
+    user = get_user_by_id(user_id)
+    if user is None:
+        logger.error("User not found for ID: %s", user_id)
+        return jsonify({"error": "User not found."}), 404
+
+    profile_schema = UserSchema()
+    try:
+        request_json = request.get_json()
+        validated_data = profile_schema.load(request_json)
+    except ValidationError as err:
+        logger.error("Validation error: %s", err.messages)
+        return err.messages, 422
+
+    height = validated_data.get('height')
+    weight = validated_data.get('weight')
+    if height and weight:
+        bmi = calculate_bmi(height, weight)
+        validated_data['bmi'] = bmi
+    
+    user.user_profile.first_name = validated_data['first_name']
+    user.user_profile.last_name = validated_data['last_name']
+    user.user_profile.age = validated_data['age']
+    user.user_profile.height = validated_data['height']
+    user.user_profile.weight = validated_data['weight']
+    user.user_profile.goal = validated_data['goal']
+    user.user_profile.lifestyle = validated_data['lifestyle']
+    user.user_profile.allergies = validated_data['allergies']
+    user.save()
+
+    return jsonify(user.user_profile), 201
+
+
+@user_blueprint.route('/profile', methods=('GET',))
+@require_session
+def get_profile():
+    user = get_user_by_id(session['user_id'])
+    if user is None:
+        return jsonify({"error": "User not found."}), 404
+
+    if not user.user_profile:
+        return jsonify({"error": "Profile not found."}), 404
+
+    return jsonify(user.user_profile), 200
 
 @user_blueprint.route("/logout", methods=("POST",))
 @require_session

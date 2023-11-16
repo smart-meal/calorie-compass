@@ -6,13 +6,13 @@ class UserSchema(Schema):
     first_name = fields.Str(required=True)
     last_name = fields.Str(required=False)
     age = fields.Int(required=False)
-    height = fields.Int(required=False)
-    weight = fields.Int(required=False)
+    height = fields.Decimal(required=False)
+    weight = fields.Decimal(required=False)
     goal =  fields.Str(required=False)
     lifestyle = fields.Str(required=False)
     allergies = fields.Str(required=False)
     body_type = fields.Str(required=False)
-    bmi = fields.Int(required=False)
+    bmi = fields.Decimal(required=False)
 
     @validates_schema
     def validate_user(self, data, **kwargs):  # pylint: disable=unused-argument
@@ -27,7 +27,7 @@ class UserSchema(Schema):
             raise ValidationError("Height can not be less than zero.")
         if data["weight"]<0:
             raise ValidationError("Weight can not be less than zero.")
-        if data["goal"].upper() != "MAINTAIN THE WEIGHT" and data["goal"].upper() != "LOSE WEIGHT" and data["goal"].upper() != "GAIN WEIGHT":
+        if data["goal"].upper() != "MAINTAIN WEIGHT" and data["goal"].upper() != "LOSE WEIGHT" and data["goal"].upper() != "GAIN WEIGHT":
             raise ValidationError("Invalid option choosen.")
         if data["lifestyle"].upper() != "LAZY" and data["lifestyle"].upper() != "SEDENTARY" and data["lifestyle"].upper() != "ACTIVE" and data["lifestyle"] != "MODERATE":
             raise ValidationError("Invalid option choosen.")
@@ -35,7 +35,7 @@ class UserSchema(Schema):
 
 
 class UsernameSchema(Schema):
-    username = fields.Str(required=true)
+    username = fields.Str(required=True)
 
     @validates_schema
     def validate_username(self, data, **kwargs):  # pylint: disable=unused-argument
