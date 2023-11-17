@@ -1,7 +1,23 @@
 import re
-
+from functools import wraps
+from flask import request
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
+
+def validate_with_schema(schema_cls):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            try:
+                request_json = request.get_json()
+                validated_data = schema_cls().load(request_json)
+                # Add the validated data to kwargs so it can be used in the route
+                kwargs['validated_data'] = validated_data
+            except ValidationError as err:
+                return err.messages, 422
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 class LoginSchema(Schema):
     username = fields.Str(required=True)

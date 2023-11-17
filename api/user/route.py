@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.user.model import User
-from api.user.schema import RegisterSchema, LoginSchema, UpdatePasswordSchema
+from api.user.schema import validate_with_schema, RegisterSchema, LoginSchema, UpdatePasswordSchema
 from api.user.service import get_user_by_username, get_user_by_id
 from api.util.auth import require_session, get_user_id_from_session
 from api.util.log import logger
@@ -16,13 +16,8 @@ user_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @user_blueprint.route('/register', methods=('POST',))
-def register():
-    register_schema = RegisterSchema()
-    try:
-        request_json = request.get_json()
-        validated_data = register_schema.load(request_json)
-    except ValidationError as err:
-        return err.messages, 422
+@validate_with_schema(RegisterSchema)
+def register(validated_data):
     username = validated_data['username']
     password = validated_data['password']
     logger.info("Registering '%s'", username)
@@ -50,15 +45,10 @@ def register():
 
 
 @user_blueprint.route('/login', methods=('POST',))
-def login():
-    login_schema = LoginSchema()
-    try:
-        request_json = request.get_json()
-        login_schema.load(request_json)
-    except ValidationError as err:
-        return err.messages, 422
-    username = request_json['username']
-    password = request_json['password']
+@validate_with_schema(LoginSchema)
+def login(validated_data):
+    username = validated_data['username']
+    password = validated_data['password']
 
     error = None
     user = get_user_by_username(username)
@@ -110,16 +100,11 @@ def delete_account():
 
 @user_blueprint.route("/update_password", methods=("POST",))
 @require_session
-def update_password():
-    update_schema = UpdatePasswordSchema()
-    try:
-        request_json = request.get_json()
-        update_schema.load(request_json)
-    except ValidationError as err:
-        return err.messages, 422
+@validate_with_schema(UpdatePasswordSchema)
+def update_password(validated_data):
 
-    old_password = request_json['old_password']
-    new_password = request_json['new_password']
+    old_password = validated_data['old_password']
+    new_password = validated_data['new_password']
 
     user_id = session['user_id']
     user = get_user_by_id(user_id)
