@@ -1,9 +1,8 @@
 import os
 
 from flask import (
-    Blueprint, request, session, jsonify
+    Blueprint, session, jsonify
 )
-from marshmallow import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.user.model import User
