@@ -6,8 +6,8 @@ from flask import (
 from marshmallow import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from api.user.model import User
-from api.user.schema import RegisterSchema, LoginSchema, UpdatePasswordSchema
+from api.user.model import User, Meal
+from api.user.schema import RegisterSchema, LoginSchema, UpdatePasswordSchema, MealSchema
 from api.user.service import get_user_by_username, get_user_by_id
 from api.util.auth import require_session, get_user_id_from_session
 from api.util.log import logger
@@ -107,6 +107,46 @@ def delete_account():
 
     session.clear()
     return jsonify({"message": "Successfully deleted"})
+
+
+@user_blueprint.route('/add_meal', methods=('POST',))
+@require_session
+def add_meal():
+    meal_schema = MealSchema()
+    try:
+        request_json = request.get_json()
+        meal_data = meal_schema.load(request_json)
+    except ValidationError as err:
+        return err.messages, 422
+
+    user_id = session['user_id']
+    user = get_user_by_id(user_id)
+
+    if not user:
+        error = f"User with ID {user_id} not found."
+        return jsonify({"error": error}), 400
+
+    meal = Meal(user=user, **meal_data)
+    meal.save()
+
+    result = meal.to_dict()
+    return jsonify(result)
+
+@user_blueprint.route('/get_meals', methods=('GET',))
+@require_session
+def get_meals():
+    user_id = session['user_id']
+    user = get_user_by_id(user_id)
+
+    if not user:
+        error = f"User with ID {user_id} not found."
+        return jsonify({"error": error}), 400
+
+    meals = Meal.objects(user=user)
+    meal_list = [meal.to_dict() for meal in meals]
+
+    return jsonify(meal_list)
+
 
 @user_blueprint.route("/update_password", methods=("POST",))
 @require_session

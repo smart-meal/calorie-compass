@@ -1,7 +1,6 @@
 import re
-
+from datetime import date
 from marshmallow import Schema, fields, validates_schema, ValidationError
-
 
 class LoginSchema(Schema):
     username = fields.Str(required=True)
@@ -58,3 +57,20 @@ class UpdatePasswordSchema(Schema):
 
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", data["new_password"]):
             raise ValidationError("Password must contain at least one special character")
+
+class MealSchema(Schema):
+    title = fields.Str(required=True)
+    meal_date = fields.Date(required=True)
+    description = fields.Str()
+    weight = fields.Float()
+    calories = fields.Float()
+    fat = fields.Float()
+    carbs = fields.Float()
+    proteins = fields.Float()
+    picture_url = fields.Str()
+
+    @validates_schema
+    def validate_date(self, data, **kwargs):
+        if "meal_date" in data and data["meal_date"] is not None:
+            if data["meal_date"] > date.today():
+                raise ValidationError("Date cannot be in the future")
