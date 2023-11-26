@@ -4,6 +4,19 @@ import openai
 
 
 class Chat:
+    """
+    A Chat class to interact with OpenAI's GPT model.
+
+
+    This class handles sending messages to the GPT model and receiving responses.
+
+    Attributes:
+        messages (List[Dict]): A list of previous messages in the chat.
+        max_tokens (int): Maximum number of tokens to generate for each response.
+        api_key (str): API key for accessing OpenAI's GPT model.
+        model (str): The name of the GPT model to use.
+    """
+
     def __init__(
             self,
             api_key: str,
@@ -19,6 +32,13 @@ class Chat:
         self.model = model
 
     def send_message(self, message: str, role: str = "user") -> str:
+        """
+        Sends a message to the GPT model and receives a response.
+
+        Args:
+            message (str): The message to send.
+            role (str, optional): The role of the message sender (e.g., "user"). Defaults to "user".
+        """
         new_message = {"role": role, "content": message}
         self.messages.append(new_message)
         response = openai.ChatCompletion.create(
@@ -37,4 +57,10 @@ class Chat:
         return resp_message
 
     def get_messages(self):
+        """
+        Retrieves all messages from the chat history.
+
+        Returns:
+            List[Dict]: A list of messages in the chat history.
+        """
         return self.messages

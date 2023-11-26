@@ -1,3 +1,7 @@
+"""
+This module defines routes for user authentication and management.
+It includes endpoints for user registration, login, password update.
+"""
 import os
 
 from flask import (
@@ -17,6 +21,9 @@ user_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 @user_blueprint.route('/register', methods=('POST',))
 def register():
+    """
+    Handle user registration.
+    """
     register_schema = RegisterSchema()
     try:
         request_json = request.get_json()
@@ -51,6 +58,11 @@ def register():
 
 @user_blueprint.route('/login', methods=('POST',))
 def login():
+    """
+    Handle user login.
+    Validates the provided credentials and sets the user session if successful.
+    Returns a JSON response with the user's data or an error message.
+    """
     login_schema = LoginSchema()
     try:
         request_json = request.get_json()
@@ -89,6 +101,9 @@ def login():
 @user_blueprint.route("/logout", methods=("POST",))
 @require_session
 def logout():
+    """
+    Clears the current user session.
+    """
     logger.info("Logging out '%s'", get_user_id_from_session())
     session.clear()
     return jsonify({"message": "Successfully logged out"})
@@ -96,6 +111,11 @@ def logout():
 @user_blueprint.route("/delete", methods=("POST",))
 @require_session
 def delete_account():
+    """
+    Deletes the user's account and clears the session.
+    Require logged-in session.
+    Returns a JSON response indicating successful deletion.
+    """
     user_id = get_user_id_from_session()
     user = get_user_by_id(user_id)
 
@@ -111,6 +131,11 @@ def delete_account():
 @user_blueprint.route("/update_password", methods=("POST",))
 @require_session
 def update_password():
+    """
+    Update password for a user.
+    Require logged-in session.
+    Returns a JSON response with the updated user's data or an error message.
+    """
     update_schema = UpdatePasswordSchema()
     try:
         request_json = request.get_json()
