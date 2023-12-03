@@ -165,3 +165,21 @@ def update_password():
     session.clear()
     session['user_id'] = str(user['id'])
     return jsonify(user.to_dict())
+
+from azure.storage.blob import BlobServiceClient, BlobClient
+
+connect_str = "BlobEndpoint=https://cs2100320026d49969e.blob.core.windows.net/calorie?sp=racwdl&st=2023-12-03T06:36:46Z&se=2023-12-03T14:36:46Z&spr=https&sv=2022-11-02&sr=c&sig=dKImJoE6xCGnQWydkaGpubKSggLGMWrf5V6q1N%2FQHH4%3D"
+blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+container_name = "calorie"
+
+@user_blueprint.route("/upload", methods=("POST",))
+def upload():
+    if 'file' not in request.files:
+        return "No file part", 400
+    file = request.files['file']
+    if file.filename == '':
+        return "No selected file", 400
+    if file:
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob=file.filename)
+        blob_client.upload_blob(file)
+        return jsonify({'message': 'File uploaded successfully', 'filename': file.filename})
