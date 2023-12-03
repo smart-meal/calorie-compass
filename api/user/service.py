@@ -8,6 +8,12 @@ def get_user_by_username(username: str) -> Optional[User]:
     """
     Return the user model by its username
     If no user found, return None
+
+    Args:
+        username (str): The username
+
+    Returns:
+        Optional[User]: The User object if found; otherwise, None.
     """
     # pylint: disable=no-member
     users_result = User.objects(username=username)
@@ -23,6 +29,12 @@ def get_user_by_id(uid: str) -> Optional[User]:
     """
     Return the user model by its id
     If no user found, return None
+    
+    Args:
+        uid (str): The unique identifier of the user to retrieve.
+
+    Returns:
+        Optional[User]: The User object if found; otherwise, None.
     """
     # pylint: disable=no-member
     users_result = User.objects(id=uid)
