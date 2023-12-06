@@ -1,10 +1,10 @@
 import os
 
 from flask import (
-    Blueprint, session, jsonify
+    Blueprint, session, jsonify, request
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-
+from marshmallow import ValidationError
 from api.user.model import User, Meal, UserProfile
 from api.user.schema import validate_with_schema, RegisterSchema, LoginSchema, UserSchema, UpdatePasswordSchema, MealSchema
 from api.user.service import get_user_by_username, get_user_by_id, calculate_bmi
