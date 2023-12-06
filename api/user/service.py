@@ -26,6 +26,7 @@ def get_user_by_id(uid: str) -> Optional[User]:
     """
     # pylint: disable=no-member
     users_result = User.objects(id=uid)
+    print(users_result)
     count = users_result.count()
     if count > 1:
         logger.error("%s users matched by user id '%s'", count, uid)
@@ -33,3 +34,10 @@ def get_user_by_id(uid: str) -> Optional[User]:
     if count == 0:
         return None
     return users_result.get()
+
+def calculate_bmi(height, weight):
+    # Ensure that height is in meters
+    height_in_meters = height / 100
+    bmi = weight / (height_in_meters * height_in_meters)
+
+    return bmi
