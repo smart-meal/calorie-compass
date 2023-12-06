@@ -3,6 +3,55 @@ from functools import wraps
 from flask import request
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
+class UserSchema(Schema):
+    first_name = fields.Str(required=True)
+    last_name = fields.Str(required=False)
+    age = fields.Int(required=False)
+    height = fields.Decimal(required=False)
+    weight = fields.Decimal(required=False)
+    goal =  fields.Str(required=False)
+    lifestyle = fields.Str(required=False)
+    allergies = fields.Str(required=False)
+    body_type = fields.Str(required=False)
+    bmi = fields.Decimal(required=False)
+
+    @validates_schema
+    def validate_user(self, data, **kwargs):  # pylint: disable=unused-argument
+
+        if not re.search(r"[A-Za-z'-]", data["first_name"]):
+            raise ValidationError("Invalid character used in first name.")
+        if not re.search(r"[A-Za-z'-]", data["last_name"]):
+            raise ValidationError("Invalid character used in last name.")
+        if data["age"]<0:
+            raise ValidationError("Age can not be less than zero.")
+        if data["height"]<0:
+            raise ValidationError("Height can not be less than zero.")
+        if data["weight"]<0:
+            raise ValidationError("Weight can not be less than zero.")
+        if data["goal"].upper() != "MAINTAIN WEIGHT" and data["goal"].upper() != "LOSE WEIGHT" and data["goal"].upper() != "GAIN WEIGHT":
+            raise ValidationError("Invalid option choosen.")
+        if data["lifestyle"].upper() != "LAZY" and data["lifestyle"].upper() != "SEDENTARY" and data["lifestyle"].upper() != "ACTIVE" and data["lifestyle"] != "MODERATE":
+            raise ValidationError("Invalid option choosen.")
+
+
+
+class UsernameSchema(Schema):
+    username = fields.Str(required=True)
+
+    @validates_schema
+    def validate_username(self, data, **kwargs):  # pylint: disable=unused-argument
+    
+      if not re.search(r"[!@#$%^&*(_-=+;?/`~),.?\":{}|<>]", data["username"]):
+            raise ValidationError("Username should not contain any special character")
+          
+      if not re.search(r"[0-9]", data["username"]):
+            raise ValidationError("Username must contain atlst one number")
+
+      
+      if len(data["username"]) > 25:
+         raise ValidationError("Username should not be more than 25 characters")
+      
+
 
 def validate_with_schema(schema_cls):
     def decorator(f):
@@ -22,7 +71,6 @@ def validate_with_schema(schema_cls):
 class LoginSchema(Schema):
     username = fields.Str(required=True)
     password = fields.Str(required=True)
-
 
 class RegisterSchema(Schema):
     username = fields.Str(required=True)

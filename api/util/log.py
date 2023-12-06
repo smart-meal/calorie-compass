@@ -22,7 +22,7 @@ class LoggingFileSetup:
 @dataclass
 class LoggingSetup:
     name: str
-    console_level: int = logging.ERROR
+    console_level: int = logging.INFO
     console_format: str = CONSOLE_LOG_FORMAT
     file_setup: LoggingFileSetup = field(
         default_factory=lambda: LoggingFileSetup()  # pylint: disable=unnecessary-lambda

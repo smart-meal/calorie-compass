@@ -17,7 +17,7 @@ OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 LOG_FORMAT = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
-CONSOLE_LOG_FORMAT = "%(levelname)s - %(message)s"
+CONSOLE_LOG_FORMAT = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
 logging.basicConfig(
     level=logging.ERROR,
     format=LOG_FORMAT,
