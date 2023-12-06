@@ -2,6 +2,9 @@ from typing import List, Dict, Optional
 
 import openai
 
+from api import config
+from api.chat.model import Message
+
 
 class Chat:
     """
@@ -64,3 +67,10 @@ class Chat:
             List[Dict]: A list of messages in the chat history.
         """
         return self.messages
+
+
+def get_chat_from_messages(previous_messages: List[Message], api_key: str = config.OPENAI_API_KEY):
+    converted_messages = [
+        {"content": m.text, "role": m.type.value} for m in previous_messages
+    ]
+    return Chat(previous_messages=converted_messages, api_key=api_key)

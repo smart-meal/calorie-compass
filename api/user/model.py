@@ -1,5 +1,16 @@
 import mongoengine as me
 
+class UserProfile(me.EmbeddedDocument):
+    first_name = me.StringField(required=True)
+    last_name = me.StringField()
+    age = me.IntField()
+    height = me.DecimalField()
+    weight = me.DecimalField()
+    goal = me.StringField(choices=["Maintain weight", "Lose weight", "Gain weight"])
+    lifestyle = me.StringField(choices=["Lazy", "Sedentary", "Active", "Moderate"])
+    allergies = me.StringField()
+    body_type = me.StringField()
+    bmi = me.DecimalField()
 
 class User(me.Document):
     """
@@ -12,6 +23,13 @@ class User(me.Document):
     """The hashed password of the user. """
     salt = me.StringField(required=True)
     """The random salt generated when register in password hashing. """
+    user_profile = me.EmbeddedDocumentField(UserProfile)
+    """User Profile """
+
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        if not self.user_profile:
+            self.user_profile = UserProfile()
 
     def to_dict(self):
         """

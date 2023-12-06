@@ -15,11 +15,12 @@ MONGO_USERNAME = os.getenv("MONGO_USERNAME")
 MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY")
+AZURE_ACCOUNT = "cs2100320026d49969e"
 AZURE_CONN = os.getenv("AZURE_CONN")
 AZURE_CONTAINER = os.getenv("AZURE_CONTAINER")
 
 LOG_FORMAT = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
-CONSOLE_LOG_FORMAT = "%(levelname)s - %(message)s"
+CONSOLE_LOG_FORMAT = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
 logging.basicConfig(
     level=logging.ERROR,
     format=LOG_FORMAT,
