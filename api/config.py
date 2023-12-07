@@ -14,6 +14,7 @@ MONGO_PORT = int(os.environ["MONGO_PORT"])
 MONGO_USERNAME = os.environ["MONGO_USERNAME"]
 MONGO_PASSWORD = os.environ["MONGO_PASSWORD"]
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+VISION_API_KEY = os.environ["VISION_API_KEY"]
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 LOG_FORMAT = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"

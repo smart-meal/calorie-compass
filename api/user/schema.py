@@ -5,7 +5,7 @@ from flask import request
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
 class UserSchema(Schema):
-    first_name = fields.Str(required=True)
+    first_name = fields.Str(required=False)
     last_name = fields.Str(required=False)
     age = fields.Int(required=False)
     height = fields.Decimal(required=False)
@@ -41,18 +41,12 @@ class UsernameSchema(Schema):
 
     @validates_schema
     def validate_username(self, data, **kwargs):  # pylint: disable=unused-argument
-    
-      if not re.search(r"[!@#$%^&*(_-=+;?/`~),.?\":{}|<>]", data["username"]):
+        if not re.search(r"[!@#$%^&*(_-=+;?/`~),.?\":{}|<>]", data["username"]):
             raise ValidationError("Username should not contain any special character")
-          
-      if not re.search(r"[0-9]", data["username"]):
+        if not re.search(r"[0-9]", data["username"]):
             raise ValidationError("Username must contain atlst one number")
-
-      
-      if len(data["username"]) > 25:
-         raise ValidationError("Username should not be more than 25 characters")
-      
-
+        if len(data["username"]) > 25:
+            raise ValidationError("Username should not be more than 25 characters")
 
 def validate_with_schema(schema_cls):
     def decorator(f):
@@ -126,6 +120,7 @@ class UpdatePasswordSchema(Schema):
 
 class MealSchema(Schema):
     title = fields.Str(required=True)
+    image_url = fields.Str(required=True)
     meal_date = fields.Date(required=True)
     description = fields.Str()
     weight = fields.Float()
@@ -133,7 +128,6 @@ class MealSchema(Schema):
     fat = fields.Float()
     carbs = fields.Float()
     proteins = fields.Float()
-    picture_url = fields.Str()
 
     @validates_schema
     def validate_date(self, data, **kwargs):

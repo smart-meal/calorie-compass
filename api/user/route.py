@@ -1,5 +1,5 @@
 import os
-
+import json
 from flask import (
     Blueprint, session, jsonify, request
 )
@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from marshmallow import ValidationError
 from api.user.model import User, Meal, UserProfile
 from api.user.schema import validate_with_schema, RegisterSchema, LoginSchema, UserSchema, UpdatePasswordSchema, MealSchema
-from api.user.service import get_user_by_username, get_user_by_id, calculate_bmi
+from api.user.service import get_user_by_username, get_user_by_id, calculate_bmi, get_image_info
 from api.util.auth import require_session, get_user_id_from_session
 from api.util.log import logger
 
@@ -98,7 +98,7 @@ def create_profile():
     if height and weight:
         bmi = calculate_bmi(height, weight)
         validated_data['bmi'] = bmi
-    
+
     user.user_profile.first_name = validated_data['first_name']
     user.user_profile.last_name = validated_data['last_name']
     user.user_profile.age = validated_data['age']
@@ -151,9 +151,15 @@ def delete_account():
 @require_session
 def add_meal():
     meal_schema = MealSchema()
+    request_json = request.get_json()
+    meal_info = json.loads(get_image_info(request_json.get("image_url")))
+    combined_meal = {**request_json, **meal_info}
+    keys_to_convert = ['weight', 'calories', 'fat', 'proteins', 'carbs']
+    for key in keys_to_convert:
+        combined_meal[key] = float(combined_meal[key])
+    print(combined_meal)
     try:
-        request_json = request.get_json()
-        meal_data = meal_schema.load(request_json)
+        meal_data = meal_schema.load(combined_meal)
     except ValidationError as err:
         return err.messages, 422
 
@@ -163,7 +169,6 @@ def add_meal():
     if not user:
         error = f"User with ID {user_id} not found."
         return jsonify({"error": error}), 400
-
     meal = Meal(user=user, **meal_data)
     meal.save()
 

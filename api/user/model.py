@@ -1,7 +1,7 @@
 import mongoengine as me
 
 class UserProfile(me.EmbeddedDocument):
-    first_name = me.StringField(required=True)
+    first_name = me.StringField()
     last_name = me.StringField()
     age = me.IntField()
     height = me.DecimalField()
@@ -32,6 +32,7 @@ class User(me.Document):
 
 class Meal(me.Document):
     title = me.StringField(required=True)
+    image_url = me.StringField(required=True)
     meal_date = me.DateField(required=True)
     description = me.StringField()
     weight = me.FloatField()
@@ -39,7 +40,6 @@ class Meal(me.Document):
     fat = me.FloatField()
     carbs = me.FloatField()
     proteins = me.FloatField()
-    picture_url = me.StringField()
     user = me.ReferenceField(User, reverse_delete_rule=me.CASCADE)
 
     def to_dict(self):
