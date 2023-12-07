@@ -4,7 +4,7 @@ from flask import request
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
 class UserSchema(Schema):
-    first_name = fields.Str(required=True)
+    first_name = fields.Str(required=False)
     last_name = fields.Str(required=False)
     age = fields.Int(required=False)
     height = fields.Decimal(required=False)
@@ -28,29 +28,29 @@ class UserSchema(Schema):
             raise ValidationError("Height can not be less than zero.")
         if data["weight"]<0:
             raise ValidationError("Weight can not be less than zero.")
-        if data["goal"].upper() != "MAINTAIN WEIGHT" and data["goal"].upper() != "LOSE WEIGHT" and data["goal"].upper() != "GAIN WEIGHT":
+        if data["goal"].upper() != "MAINTAIN WEIGHT" and \
+                data["goal"].upper() != "LOSE WEIGHT" and \
+                data["goal"].upper() != "GAIN WEIGHT":
             raise ValidationError("Invalid option choosen.")
-        if data["lifestyle"].upper() != "LAZY" and data["lifestyle"].upper() != "SEDENTARY" and data["lifestyle"].upper() != "ACTIVE" and data["lifestyle"] != "MODERATE":
+        if data["lifestyle"].upper() != "LAZY" and \
+                data["lifestyle"].upper() != "SEDENTARY" and \
+                data["lifestyle"].upper() != "ACTIVE" and \
+                data["lifestyle"] != "MODERATE":
             raise ValidationError("Invalid option choosen.")
-
-
 
 class UsernameSchema(Schema):
     username = fields.Str(required=True)
 
     @validates_schema
     def validate_username(self, data, **kwargs):  # pylint: disable=unused-argument
-    
-      if not re.search(r"[!@#$%^&*(_-=+;?/`~),.?\":{}|<>]", data["username"]):
+        if not re.search(r"[!@#$%^&*(_-=+;?/`~),.?\":{}|<>]", data["username"]):
             raise ValidationError("Username should not contain any special character")
-          
-      if not re.search(r"[0-9]", data["username"]):
+
+        if not re.search(r"[0-9]", data["username"]):
             raise ValidationError("Username must contain atlst one number")
 
-      
-      if len(data["username"]) > 25:
-         raise ValidationError("Username should not be more than 25 characters")
-      
+        if len(data["username"]) > 25:
+            raise ValidationError("Username should not be more than 25 characters")
 
 
 def validate_with_schema(schema_cls):
