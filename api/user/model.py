@@ -19,7 +19,7 @@ class User(me.Document):
     """
     username = me.StringField(required=True)
     """The username of the user. """
-    password_hash = me.StringField(required=True) 
+    password_hash = me.StringField(required=True)
     """The hashed password of the user. """
     salt = me.StringField(required=True)
     """The random salt generated when register in password hashing. """
@@ -27,7 +27,7 @@ class User(me.Document):
     """User Profile """
 
     def __init__(self, *args, **kwargs):
-        super(User, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if not self.user_profile:
             self.user_profile = UserProfile()
 

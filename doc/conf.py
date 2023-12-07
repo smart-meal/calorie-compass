@@ -5,6 +5,7 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+# pylint: skip-file
 
 project = 'Calorie Compass'
 copyright = '2023, Calorie Compass'

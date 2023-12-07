@@ -9,15 +9,19 @@ import random
 from flask import (
     Blueprint, request, session, jsonify
 )
+from marshmallow import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
+from azure.storage.blob import BlobServiceClient
 
-from api.user.model import User, UserProfile
+from api.user.model import User
 from api.user.schema import validate_with_schema, RegisterSchema, LoginSchema, UserSchema, UpdatePasswordSchema
 from api.user.service import get_user_by_username, get_user_by_id, calculate_bmi
 from api.util.auth import require_session, get_user_id_from_session
 from api.util.log import logger
 from api import config
+
+blob_service_client = BlobServiceClient.from_connection_string(config.AZURE_CONN)
 
 user_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -114,7 +118,7 @@ def create_profile():
     if height and weight:
         bmi = calculate_bmi(height, weight)
         validated_data['bmi'] = bmi
-    
+
     user.user_profile.first_name = validated_data['first_name']
     user.user_profile.last_name = validated_data['last_name']
     user.user_profile.age = validated_data['age']
@@ -203,9 +207,6 @@ def update_password(validated_data):
     session['user_id'] = str(user['id'])
     return jsonify(user.to_dict())
 
-from azure.storage.blob import BlobServiceClient, BlobClient
-blob_service_client = BlobServiceClient.from_connection_string(config.AZURE_CONN)
-
 @user_blueprint.route("/upload", methods=("POST",))
 def upload():
     """
@@ -220,19 +221,14 @@ def upload():
     fileextension = filename.rsplit('.',1)[1]
     randomfilename = id_generator()
     filename = randomfilename + '.' + fileextension
-    try:
 
-        container = config.AZURE_CONTAINER
-        account = config.AZURE_ACCOUNT
-        blob_client = blob_service_client.get_blob_client(container=config.AZURE_CONTAINER, blob=filename)
+    container = config.AZURE_CONTAINER
+    account = config.AZURE_ACCOUNT
+    blob_client = blob_service_client.get_blob_client(container=config.AZURE_CONTAINER, blob=filename)
 
-        blob_client.upload_blob(file)
-        url =  'http://'+ account + '.blob.core.windows.net/' + container + '/' + container + '/' + filename
-        return jsonify({
-            'message': 'File uploaded successfully', 
-            'filename': file.filename,
-            'url': url})
-
-    except Exception as e:
-        print(e)
-        pass
+    blob_client.upload_blob(file)
+    url =  'http://'+ account + '.blob.core.windows.net/' + container + '/' + container + '/' + filename
+    return jsonify({
+        'message': 'File uploaded successfully', 
+        'filename': file.filename,
+        'url': url})
