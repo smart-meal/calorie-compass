@@ -1,7 +1,7 @@
 import mongoengine as me
 
 class UserProfile(me.EmbeddedDocument):
-    first_name = me.StringField(required=True)
+    first_name = me.StringField()
     last_name = me.StringField()
     age = me.IntField()
     height = me.DecimalField()

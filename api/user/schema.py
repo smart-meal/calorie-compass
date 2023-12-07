@@ -4,7 +4,7 @@ from flask import request
 from marshmallow import Schema, fields, validates_schema, ValidationError
 
 class UserSchema(Schema):
-    first_name = fields.Str(required=True)
+    first_name = fields.Str(required=False)
     last_name = fields.Str(required=False)
     age = fields.Int(required=False)
     height = fields.Decimal(required=False)
