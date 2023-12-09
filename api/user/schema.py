@@ -121,7 +121,7 @@ class UpdatePasswordSchema(Schema):
 class MealSchema(Schema):
     title = fields.Str(required=True)
     image_url = fields.Str(required=True)
-    meal_date = fields.Date(required=True)
+    meal_date = fields.DateTime(required=True)
     description = fields.Str()
     weight = fields.Float()
     calories = fields.Float()
@@ -132,5 +132,5 @@ class MealSchema(Schema):
     @validates_schema
     def validate_date(self, data, **kwargs):
         if "meal_date" in data and data["meal_date"] is not None:
-            if data["meal_date"] > date.today():
+            if data["meal_date"].date() > date.today():
                 raise ValidationError("Date cannot be in the future")
