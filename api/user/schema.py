@@ -29,9 +29,14 @@ class UserSchema(Schema):
             raise ValidationError("Height can not be less than zero.")
         if data["weight"]<0:
             raise ValidationError("Weight can not be less than zero.")
-        if data["goal"].upper() != "MAINTAIN WEIGHT" and data["goal"].upper() != "LOSE WEIGHT" and data["goal"].upper() != "GAIN WEIGHT":
+        if data["goal"].upper() != "MAINTAIN WEIGHT" and \
+                data["goal"].upper() != "LOSE WEIGHT" and \
+                data["goal"].upper() != "GAIN WEIGHT":
             raise ValidationError("Invalid option choosen.")
-        if data["lifestyle"].upper() != "LAZY" and data["lifestyle"].upper() != "SEDENTARY" and data["lifestyle"].upper() != "ACTIVE" and data["lifestyle"] != "MODERATE":
+        if data["lifestyle"].upper() != "LAZY" and \
+                data["lifestyle"].upper() != "SEDENTARY" and \
+                data["lifestyle"].upper() != "ACTIVE" and \
+                data["lifestyle"] != "MODERATE":
             raise ValidationError("Invalid option choosen.")
 
 
@@ -51,7 +56,7 @@ class UsernameSchema(Schema):
 def validate_with_schema(schema_cls):
     def decorator(f):
         @wraps(f)
-        def decorated_function(*args, **kwargs):
+        def decorated_function(*args, **kwargs):  # pylint: disable=unused-argument
             try:
                 request_json = request.get_json()
                 validated_data = schema_cls().load(request_json)
@@ -130,7 +135,7 @@ class MealSchema(Schema):
     proteins = fields.Float()
 
     @validates_schema
-    def validate_date(self, data, **kwargs):
+    def validate_date(self, data, **kwargs):  # pylint: disable=unused-argument
         if "meal_date" in data and data["meal_date"] is not None:
             if data["meal_date"].date() > date.today():
                 raise ValidationError("Date cannot be in the future")

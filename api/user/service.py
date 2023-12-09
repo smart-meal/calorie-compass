@@ -1,9 +1,11 @@
+import json
 from typing import Optional
+from openai import OpenAI
+
 from api import config
 from api.user.model import User
 from api.util.log import logger
-from openai import OpenAI
-import json
+
 
 def get_user_by_username(username: str) -> Optional[User]:
     """
@@ -51,8 +53,12 @@ def get_image_info(image_url):
     {
         "role": "user",
         "content": [
-        {"type": "text", "text": "Return 5 numbers seperated by commas only, without additional text. I understand that it won't be accurate, but use the image provided to provide your estimates of the following. The first number is the number of grams you think this meal is, \
-            the second is estimated calories, the third is estimated fat, the fourth is estimated protien, and the fifth is estimated carbs."},
+        {"type": "text", "text": "Return 5 numbers seperated by commas only, \
+            without additional text. I understand that it won't be accurate, \
+            but use the image provided to provide your estimates of the following. \
+            The first number is the number of grams you think this meal is, \
+            the second is estimated calories, the third is estimated fat, \
+            the fourth is estimated protien, and the fifth is estimated carbs."},
         {
             "type": "image_url",
             "image_url": {
