@@ -1,9 +1,13 @@
 from typing import List, Dict, Optional
 
-import openai
+from openai import OpenAI
+
+client = OpenAI()
 
 from api import config
 from api.chat.model import Message
+from api.user.service import get_user_by_id  # Import the required function to get user profile
+
 
 
 class Chat:
@@ -24,12 +28,10 @@ class Chat:
     def send_message(self, message: str, role: str = "user") -> str:
         new_message = {"role": role, "content": message}
         self.messages.append(new_message)
-        response = openai.ChatCompletion.create(
-            api_key=self.api_key,
-            model=self.model,
-            messages=self.messages,
-            max_tokens=self.max_tokens,
-        )
+        response = client.chat.completions.create(
+        model=self.model,
+        messages=self.messages,
+        max_tokens=self.max_tokens)
 
         resp = response.choices[0].message
         resp_message = resp.content

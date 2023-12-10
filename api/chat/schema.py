@@ -8,7 +8,7 @@ class NewMessageSchema(Schema):
 
 
 class MessageFilterSchema(Schema):
-    per_page = fields.Integer(required=False, default=3, missing=3)
+    per_page = fields.Integer(required=False, default=20, missing=20)
     page = fields.Integer(required=False, default=1, missing=1)
     types = fields.List(
         fields.Enum(enum=MessageType, required=True),
