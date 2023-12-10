@@ -1,7 +1,8 @@
 Flask==3.0.0
+flask_cors
 flask-mongoengine @ git+https://github.com/smart-meal/flask-mongoengine.git@1.0.1
 marshmallow==3.20.1
 mongoengine==0.27.0
-openai==0.28.1
+openai
 python-dotenv==0.21.0
 werkzeug==3.0.1
