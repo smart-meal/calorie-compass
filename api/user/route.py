@@ -7,7 +7,10 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from marshmallow import ValidationError
 from api.user.model import User, Meal
-from api.user.schema import validate_with_schema, RegisterSchema, LoginSchema, UserSchema, UpdatePasswordSchema, MealSchema
+from api.user.schema import (
+    validate_with_schema, RegisterSchema, LoginSchema, UserSchema, UpdatePasswordSchema,
+    MealSchema,
+)
 from api.user.service import get_user_by_username, get_user_by_id, calculate_bmi, get_image_info
 from api.util.auth import require_session, get_user_id_from_session
 from api.util.log import logger
@@ -193,7 +196,8 @@ def get_meals():
         error = f"User with ID {user_id} not found."
         return jsonify({"error": error}), 400
 
-    meals = Meal.objects(user=user)
+    # pylint: disable=no-member
+    meals = Meal.objects(user=user).order_by('-meal_date')
     meal_list = [meal.to_dict() for meal in meals]
 
     return jsonify(meal_list)

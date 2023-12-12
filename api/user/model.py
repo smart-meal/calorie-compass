@@ -18,7 +18,7 @@ class User(me.Document):
     salt = me.StringField(required=True)
     user_profile = me.EmbeddedDocumentField(UserProfile)
     def __init__(self, *args, **kwargs):
-        super(User, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if not self.user_profile:
             self.user_profile = UserProfile()
 
