@@ -1,5 +1,6 @@
 import os
 import json
+from flask_cors import CORS, cross_origin
 from flask import (
     Blueprint, session, jsonify, request
 )
@@ -18,6 +19,7 @@ user_blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @user_blueprint.route('/register', methods=('POST',))
+@cross_origin(supports_credentials=True)
 @validate_with_schema(RegisterSchema)
 def register(validated_data):
     username = validated_data['username']
@@ -47,6 +49,7 @@ def register(validated_data):
 
 
 @user_blueprint.route('/login', methods=('POST',))
+@cross_origin(supports_credentials=True)
 @validate_with_schema(LoginSchema)
 def login(validated_data):
     username = validated_data['username']
@@ -78,6 +81,7 @@ def login(validated_data):
     return jsonify(result), 400
 
 @user_blueprint.route('/profile', methods=('POST',))
+@cross_origin(supports_credentials=True)
 @require_session
 def create_profile():
     user_id = session.get('user_id')
@@ -110,12 +114,14 @@ def create_profile():
     user.user_profile.goal = validated_data['goal']
     user.user_profile.lifestyle = validated_data['lifestyle']
     user.user_profile.allergies = validated_data['allergies']
+    user.user_profile.bmi = validated_data['bmi']
     user.save()
 
     return jsonify(user.user_profile), 201
 
 
 @user_blueprint.route('/profile', methods=('GET',))
+@cross_origin(supports_credentials=True)
 @require_session
 def get_profile():
     user = get_user_by_id(session['user_id'])
@@ -128,6 +134,7 @@ def get_profile():
     return jsonify(user.user_profile), 200
 
 @user_blueprint.route("/logout", methods=("POST",))
+@cross_origin(supports_credentials=True)
 @require_session
 def logout():
     logger.info("Logging out '%s'", get_user_id_from_session())
@@ -151,6 +158,7 @@ def delete_account():
 
 
 @user_blueprint.route('/add_meal', methods=('POST',))
+@cross_origin(supports_credentials=True)
 @require_session
 def add_meal():
     meal_schema = MealSchema()
@@ -160,7 +168,6 @@ def add_meal():
     keys_to_convert = ['weight', 'calories', 'fat', 'proteins', 'carbs']
     for key in keys_to_convert:
         combined_meal[key] = float(combined_meal[key])
-    print(combined_meal)
     try:
         meal_data = meal_schema.load(combined_meal)
     except ValidationError as err:
@@ -179,6 +186,7 @@ def add_meal():
     return jsonify(result)
 
 @user_blueprint.route('/get_meals', methods=('GET',))
+@cross_origin(supports_credentials=True)
 @require_session
 def get_meals():
     user_id = session['user_id']
@@ -196,6 +204,7 @@ def get_meals():
 
 
 @user_blueprint.route("/update_password", methods=("POST",))
+@cross_origin(supports_credentials=True)
 @require_session
 @validate_with_schema(UpdatePasswordSchema)
 def update_password(validated_data):

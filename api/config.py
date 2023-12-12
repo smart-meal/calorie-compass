@@ -26,3 +26,5 @@ logging.basicConfig(
 
 CURRENT_DIRECTORY: Path = Path(__file__).parent
 BASE_DIRECTORY = CURRENT_DIRECTORY.parent.absolute()
+
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False') == 'True'

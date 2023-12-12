@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
+from flask_cors import CORS, cross_origin
 
 from api.chat.schema import MessageFilterSchema, NewMessageSchema
 from api.chat.service import get_messages, send_message, clean_user_chat_history
@@ -9,6 +10,7 @@ chat_blueprint = Blueprint('chat', __name__, url_prefix='/chat')
 
 
 @chat_blueprint.route('/history', methods=('POST',))
+@cross_origin(supports_credentials=True)
 @require_session
 def get_filtered_messages():
     schema = MessageFilterSchema()
@@ -23,6 +25,7 @@ def get_filtered_messages():
 
 
 @chat_blueprint.route('/new', methods=('POST',))
+@cross_origin(supports_credentials=True)
 @require_session
 def send_new_message():
     schema = NewMessageSchema()
@@ -37,6 +40,7 @@ def send_new_message():
 
 
 @chat_blueprint.route('/clean', methods=('DELETE',))
+@cross_origin(supports_credentials=True)
 @require_session
 def clean_chat_history():
     clean_user_chat_history()

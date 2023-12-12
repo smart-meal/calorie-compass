@@ -13,8 +13,9 @@ def create_app():
         SECRET_KEY=config.SECRET_KEY,
     )
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
-    app.config['SESSION_COOKIE_SECURE'] = True
-    app.config['SESSION_COOKIE_HTTPONLY'] = False
+    app.config['SESSION_COOKIE_SECURE'] = False
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = None
 
     app.config['MONGODB_SETTINGS'] = {
         "db": config.MONGO_DB_NAME,
