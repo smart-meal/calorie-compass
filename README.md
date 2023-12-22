@@ -9,7 +9,7 @@ To setup on a local environment:
 - Run the app:
   `python main.py` or `export FLASK_APP=api` then `flask run`
 
-- Make sure there is a valid .env file in the repository. Look at the `env_example` to see what is needed.
+- Make sure there is a valid .env file in the repository. Look at the `env_example` to see what is needed, or just change the name of `env_example` to .env
   Alternatively, you can set ENV_FILE_PATH with any env file as follows: `export ENV_FILE_PATH="./test_env"`
   The app will take the `test_env` file as you instructed. The app prints the file name before loading, so it is easy to
   verify the app took the correct file. Testing with pytest uses the same mechanism.
