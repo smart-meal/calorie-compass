@@ -14,7 +14,7 @@ class Chat:
     def __init__(
             self,
             api_key: str,
-            max_tokens: int = 100,
+            max_tokens: int = 300,
             previous_messages: Optional[List[Dict]] = None,
             model: str = "gpt-3.5-turbo",
     ):

@@ -30,7 +30,8 @@ class UserSchema(Schema):
         if data["weight"]<0:
             raise ValidationError("Weight can not be less than zero.")
         if data["goal"].upper() != "MAINTAIN WEIGHT" and data["goal"].upper() != "LOSE WEIGHT" and data["goal"].upper() != "GAIN WEIGHT":
-            raise ValidationError("Invalid option choosen.")
+            print(data["goal"].upper())
+            raise ValidationError("Invalid option choosen.,")
         if data["lifestyle"].upper() != "LAZY" and data["lifestyle"].upper() != "SEDENTARY" and data["lifestyle"].upper() != "ACTIVE" and data["lifestyle"] != "MODERATE":
             raise ValidationError("Invalid option choosen.")
 
@@ -122,6 +123,7 @@ class MealSchema(Schema):
     title = fields.Str(required=True)
     image_url = fields.Str(required=True)
     meal_date = fields.Date(required=True)
+    meal_time = fields.Str(required=True)
     description = fields.Str()
     weight = fields.Float()
     calories = fields.Float()
