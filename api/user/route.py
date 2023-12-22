@@ -92,6 +92,7 @@ def create_profile():
     profile_schema = UserSchema()
     try:
         request_json = request.get_json()
+        print(request_json)
         validated_data = profile_schema.load(request_json)
     except ValidationError as err:
         logger.error("Validation error: %s", err.messages)
@@ -193,7 +194,7 @@ def get_meals():
         error = f"User with ID {user_id} not found."
         return jsonify({"error": error}), 400
 
-    meals = Meal.objects(user=user)
+    meals = Meal.objects(user=user).order_by('-meal_date')
     meal_list = [meal.to_dict() for meal in meals]
 
     return jsonify(meal_list)

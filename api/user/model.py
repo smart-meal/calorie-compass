@@ -34,6 +34,7 @@ class Meal(me.Document):
     title = me.StringField(required=True)
     image_url = me.StringField(required=True)
     meal_date = me.DateField(required=True)
+    meal_time = me.StringField(required=True)
     description = me.StringField()
     weight = me.FloatField()
     calories = me.FloatField()
@@ -45,6 +46,7 @@ class Meal(me.Document):
     def to_dict(self):
         result = self.to_mongo().to_dict()
         result.pop("_id", None)
-        result["meal_date"] = result["meal_date"].strftime("%Y-%m-%d")  # Format date as string
+        result["meal_date"] = self.meal_date.strftime("%Y-%m-%d")  # Format date as string
+        # result["meal_time"] = self.meal_time.strftime("%H:%M")  # Format time as string
         result["user_id"] = str(self.user.id)
         return result
